@@ -41,6 +41,28 @@ class ConversationsRepository extends BaseRepository {
       throw err
     }
   }
+
+  async getConverById(converId) {
+    try {
+      const excludeAttrs = []
+      const conversation = await this.CONVER_REPO.getById(id, excludeAttrs)
+      if (!conversation)
+        throw new Api404Error(`The conversation with id: ${id} not found.`)
+
+      conversation.dataValues.members = await conversation.getMembers({
+        attributes: { exclude: ['password'] },
+      })
+      conversation.dataValues.lastMessage = await conversation.getLastMessage()
+
+      return {
+        success: true,
+        data: conversation,
+        message: 'Get conversation by id successfully.',
+      }
+    } catch (err) {
+      throw err
+    }
+  }
 }
 
 export default ConversationsRepository

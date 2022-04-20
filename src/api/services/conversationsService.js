@@ -34,7 +34,10 @@ class ConversationsService {
   async getById(id) {
     try {
       const excludeAttrs = []
-      const conversation = await this.CONVER_REPO.getById(id, excludeAttrs)
+      const conversation = await this.CONVER_REPO.getConverById(
+        id,
+        excludeAttrs
+      )
       if (!conversation)
         throw new Api404Error(`The conversation with id: ${id} not found.`)
 
