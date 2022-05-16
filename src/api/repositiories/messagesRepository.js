@@ -45,7 +45,8 @@ class MessasgesRepository extends BaseRepository {
   async createMessage(message) {
     try {
       const createdMessage = await MESS_TABLE.create(message)
-      if (createdMessage.messageType === messageType.IMAGE && message.images) {
+
+      if (message.images) {
         for (let i = 0; i < message.images.length; i++) {
           if (message.images[i]) {
             await createdMessage.createImagesOfMess({
@@ -58,6 +59,9 @@ class MessasgesRepository extends BaseRepository {
       if (createdMessage.dataValues) {
         createdMessage.dataValues.sender =
           await createdMessage.getSenderOfMess()
+
+        createdMessage.dataValues.images =
+          await createdMessage.getImagesOfMess()
       }
 
       return createdMessage

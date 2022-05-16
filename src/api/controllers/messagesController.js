@@ -36,7 +36,6 @@ router.post('/', async (req, res, next) => {
       conversationId: req.body.conversationId,
       senderId: req.body.senderId,
       repliedMessageId: req.body.repliedMessageId,
-      messageType: req.body.messageType,
       textContent: req.body.textContent,
       link: req.body.link,
       images: req.body.images,

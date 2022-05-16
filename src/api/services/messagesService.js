@@ -53,9 +53,7 @@ class MessagesService {
       if (!message.senderId) {
         throw new BadRequestError('Please pass senderId param!')
       }
-      if (!message.messageType) {
-        throw new BadRequestError('Please pass messageType param!')
-      }
+
       let result = await this.MESS_REPO.createMessage(message)
 
       if (result) {
@@ -67,7 +65,7 @@ class MessagesService {
       return {
         success: true,
         data: result,
-        message: 'The users is created successfully.',
+        message: 'The message is created successfully.',
       }
     } catch (err) {
       throw err
