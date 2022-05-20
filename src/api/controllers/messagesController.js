@@ -12,6 +12,7 @@ router.get('/', async (req, res, next) => {
   try {
     const converId = req.query.converId
     const result = await MESS_SV.getAll(converId)
+    console.log({ result: result })
     res.status(httpStatusCode.OK).json(result)
   } catch (err) {
     next(err)
@@ -37,6 +38,7 @@ router.post('/', async (req, res, next) => {
       senderId: req.body.senderId,
       repliedMessageId: req.body.repliedMessageId,
       textContent: req.body.textContent,
+      messageType: req.body.messageType,
       link: req.body.link,
       images: req.body.images,
     }

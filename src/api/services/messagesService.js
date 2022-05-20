@@ -53,6 +53,9 @@ class MessagesService {
       if (!message.senderId) {
         throw new BadRequestError('Please pass senderId param!')
       }
+      if (!message.messageType) {
+        throw new BadRequestError('Please pass messageType param!')
+      }
 
       let result = await this.MESS_REPO.createMessage(message)
 
