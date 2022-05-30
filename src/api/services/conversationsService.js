@@ -1,5 +1,6 @@
 import ConversationsRepository from '../repositiories/conversationsRepository.js'
 import UsersRepository from '../repositiories/usersRepository.js'
+import ParticipantsRepository from '../repositiories/participantsRepository.js'
 
 import Api404Error from '../../errors/api404Error.js'
 import BadRequestError from '../../errors/badRequestError.js'
@@ -10,6 +11,7 @@ class ConversationsService {
   constructor() {
     this.CONVER_REPO = new ConversationsRepository()
     this.USER_REPO = new UsersRepository()
+    this.PARTI_REPO = new ParticipantsRepository()
   }
 
   async getAll(userId) {
@@ -60,11 +62,11 @@ class ConversationsService {
 
       if (!conver.members || !conver.members.length >= 2) {
         throw new BadRequestError(
-          'Please pass members param or params param is not valid!'
+          'Please pass members param or members param is not valid!'
         )
       }
 
-      const createdConver = await this.CONVER_REPO.create({
+      let createdConver = await this.CONVER_REPO.create({
         title: conver.title,
         avatar: conver.avatar,
       })
@@ -74,10 +76,70 @@ class ConversationsService {
         createdConver.addMember(member)
       }
 
+      console.log({ createdConver })
+
       return {
         success: true,
         data: createdConver,
         message: 'The conver is created successfully.',
+      }
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async chatWithUser(members) {
+    try {
+      if (!members || !members.length >= 2) {
+        throw new BadRequestError(
+          'Please pass members param or members param is not valid!'
+        )
+      }
+
+      //TODO: get conver of members.
+      const mem01 = members[0]
+      const partsOfMem01 = await this.PARTI_REPO.getByUserId(mem01.id)
+      const mem02 = members[1]
+      const partsOfMem02 = await this.PARTI_REPO.getByUserId(mem02.id)
+
+      let existedConverId = null
+      partsOfMem01.forEach((partOfMem01) => {
+        partsOfMem02.forEach((partOfMem02) => {
+          if (
+            partOfMem01.dataValues.conversationId ===
+            partOfMem02.dataValues.conversationId
+          ) {
+            existedConverId = partOfMem01.dataValues.conversationId
+          }
+        })
+      })
+
+      let converResult = null
+      if (existedConverId) {
+        const res = await this.getById(existedConverId)
+        converResult = res.data
+      } else {
+        //Tạo conver mới:
+        const newConver = {
+          title: '',
+          avatar: '',
+          members: members.map((m) => m.id),
+        }
+        let res = await this.create(newConver)
+        console.log({ res })
+        res = await this.getById(res.data.dataValues.id)
+        converResult = res.data
+      }
+
+      console.log({ converResult })
+
+      return {
+        success: true,
+        data: {
+          conver: converResult,
+          isOld: !!existedConverId,
+        },
+        message: 'Successfully!',
       }
     } catch (err) {
       throw err

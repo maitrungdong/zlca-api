@@ -7,10 +7,12 @@ import UsersService from '../services/usersService.js'
 const router = express.Router()
 const SERVICE = new UsersService()
 
-//Get all users
+//Get all users or by keyword.
 router.get('/', async (req, res, next) => {
   try {
-    const result = await SERVICE.getAll()
+    const keyword = req.query.search
+
+    const result = await SERVICE.getAll(keyword)
     res.status(httpStatusCode.OK).json(result)
   } catch (err) {
     next(err)

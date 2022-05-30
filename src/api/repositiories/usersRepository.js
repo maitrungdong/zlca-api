@@ -1,5 +1,6 @@
 import BaseRepository from './baseRepository.js'
 import db from '../../models/index.js'
+import { Op } from 'sequelize'
 
 const TABLE = db.User
 const ID_FIELD = 'id'
@@ -19,6 +20,34 @@ class UsersRepository extends BaseRepository {
       })
 
       return user
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async searchUsersByKeyword(keyword, excludes = ['password']) {
+    try {
+      const users = await this.TABLE.findAll({
+        where: {
+          [Op.or]: [
+            {
+              fullName: {
+                [Op.like]: `%${keyword}%`,
+              },
+            },
+            {
+              phoneNumber: {
+                [Op.like]: `%${keyword}%`,
+              },
+            },
+          ],
+        },
+        attributes: {
+          exclude: excludes,
+        },
+      })
+
+      return users
     } catch (err) {
       throw err
     }

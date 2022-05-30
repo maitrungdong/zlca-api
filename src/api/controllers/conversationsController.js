@@ -34,9 +34,7 @@ router.post('/', async (req, res, next) => {
   try {
     const conversation = {
       title: req.body.title,
-      avatar:
-        req.body.avatar ||
-        'https://api-private.atlassian.com/users/8f525203adb5093c5954b43a5b6420c2/avatar',
+      avatar: req.body.avatar || '',
       members: req.body.members,
     }
     const result = await CONVER_SV.create(conversation)
@@ -57,6 +55,16 @@ router.put('/:id', async (req, res, next) => {
     }
 
     const result = await CONVER_SV.updateById(id, conver)
+    res.status(httpStatusCode.OK).json(result)
+  } catch (err) {
+    next(err)
+  }
+})
+
+router.post('/chat-with-user', async (req, res, next) => {
+  try {
+    const members = req.body.members
+    const result = await CONVER_SV.chatWithUser(members)
     res.status(httpStatusCode.OK).json(result)
   } catch (err) {
     next(err)

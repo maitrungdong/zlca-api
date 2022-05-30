@@ -10,10 +10,15 @@ class UsersService {
     this.REPO = new UsersRepository()
   }
 
-  async getAll() {
+  async getAll(keyword) {
     try {
       const excludeAttrs = ['password']
-      const users = await this.REPO.getAll(excludeAttrs)
+      let users = []
+      if (!keyword) {
+        users = await this.REPO.getAll(excludeAttrs)
+      } else {
+        users = await this.REPO.searchUsersByKeyword(keyword)
+      }
 
       return {
         success: true,
